@@ -31,6 +31,9 @@
 #'
 #' #see the images in the "images" subdirectory
 #' list.files( paste0(tempdir(),"/images"))
+#' 
+#' #clean up
+#' unlink(paste0(tempdir(),"/images"),recursive=TRUE)
 #' }
 
 
@@ -45,15 +48,18 @@ vid.to.images <- function(vid.path=NULL,out.dir=NULL,overwrite=FALSE,qual=50)  {
    
   qual <- round(30-30*(qual/100)+1,0)
 
+  out.dir <- gsub("\\/(\\w+ \\w+)\\/","/\"\\1\"/",out.dir) #if image.dir has spaces
   
   #delete or create the out directory
-  if(is.null(out.dir)) stop("'out.dir' not specified.")
+  if(is.null(out.dir)|length(out.dir)==0) stop("'out.dir' not specified.")
   if(is.null(vid.path)) stop("'vid.path' not specified.")
 
   if(file.exists(out.dir) & overwrite==TRUE) unlink(out.dir,recursive = T)
   
   if(!file.exists(out.dir)) stop("Directory specified by 'out.dir' (", paste0(out.dir),") does not exist")
  
+  out.dir <- gsub("\\/(\\w+ \\w+)\\/","/\"\\1\"/",out.dir) #if image.dir has spaces
+  
   if(!file.exists(vid.path)) stop("Path specified by 'vid.path' (", paste0(vid.path),") does not exist")
   
   
@@ -105,7 +111,11 @@ vid.to.images <- function(vid.path=NULL,out.dir=NULL,overwrite=FALSE,qual=50)  {
 #'frame.rate=5,qual=100,silent=TRUE,overwrite=TRUE)
 #'
 #'file.exists(paste0(tempdir(),"/spiral.mp4"))
-#'}
+#'
+#' #clean up
+#' unlink(paste0(tempdir(),"/spiral.mp4"))
+#' unlink(paste0(tempdir(),"/images"),recursive=TRUE)
+#' }
 
 images.to.video <- function(image.dir=NULL,out.dir=NULL,vid.name=NULL,qual=50,frame.rate=10,overwrite=FALSE,silent=TRUE)  {
   
@@ -124,6 +134,7 @@ images.to.video <- function(image.dir=NULL,out.dir=NULL,vid.name=NULL,qual=50,fr
 
   if(!file.exists(out.dir)) stop("Directory specified by 'out.dir' (", paste0(out.dir),") does not exist")
   
+  out.dir <- gsub("\\/(\\w+ \\w+)\\/","/\"\\1\"/",out.dir) #if image.dir has spaces
   
   vid.path <- paste0(out.dir,"/",vid.name)
 
@@ -196,6 +207,9 @@ images.to.video <- function(image.dir=NULL,out.dir=NULL,vid.name=NULL,qual=50,fr
 #'
 #' #see the images in the "images" directory
 #' list.files( paste0(tempdir(),"/images"))
+#' 
+#' #clean up
+#' unlink(paste0(tempdir(),"/images"),recursive=TRUE)
 #' }
 
 vid.to.images2 <- function(vid.path=NULL,out.dir=NULL,overwrite=FALSE,filt=NULL,codec=NULL,silent=TRUE)  {
@@ -212,6 +226,8 @@ vid.to.images2 <- function(vid.path=NULL,out.dir=NULL,overwrite=FALSE,filt=NULL,
   #delete or create the out directory
   if(is.null(out.dir)) stop("'out.dir' not specified.")
   if(is.null(vid.path)) stop("'vid.path' not specified.")
+  
+  out.dir <- gsub("\\/(\\w+ \\w+)\\/","/\"\\1\"/",out.dir) #if image.dir has spaces
   
   if(file.exists(out.dir) & overwrite==TRUE) unlink(out.dir,recursive = T)
   
@@ -280,6 +296,9 @@ vid.to.images2 <- function(vid.path=NULL,out.dir=NULL,overwrite=FALSE,filt=NULL,
 #'frame.rate=5,qual=100,silent=TRUE,overwrite=TRUE)
 #'
 #'file.exists(paste0(tempdir(),"/spiral.mp4"))
+#'
+#' #clean up
+#' unlink(paste0(tempdir(),"/images"),recursive=TRUE)
 #'}
 
 images.to.video2 <- function(image.dir=NULL,out.dir=NULL,vid.name=NULL,overwrite=TRUE,qual=50,vid.ext=".mp4",frame.rate=10,raw=TRUE,filt=NULL,silent=TRUE)  {
@@ -303,11 +322,14 @@ images.to.video2 <- function(image.dir=NULL,out.dir=NULL,vid.name=NULL,overwrite
   
   if(raw) vid.ext <- ".avi" 
   
+  out.dir <- gsub("\\/(\\w+ \\w+)\\/","/\"\\1\"/",out.dir) #if image.dir has spaces
+
   vid.path <- paste0(out.dir,"/",vid.name)
   vid.path2 <- paste0(out.dir,"/",vid.name,vid.ext)
 
   if(file.exists(vid.path2) & overwrite==FALSE) stop("video with name 'vid.name'  exist in 'out.dir' directory. To save file of this name in this location, 'overwrite' must be 'TRUE'")
   
+
   if(file.exists(vid.path2) & overwrite==TRUE) unlink(vid.path2,recursive = T)
 
   
@@ -325,6 +347,7 @@ images.to.video2 <- function(image.dir=NULL,out.dir=NULL,vid.name=NULL,overwrite
   image.dir <- normalizePath(dirname(images[1]))
   
   image.dir <- gsub("\\/(\\w+ \\w+)\\/","/\"\\1\"/",image.dir) #if image.dir has spaces
+ 
   
   if(!raw) system(paste0("ffmpeg -i ", image.dir,"/", image.name,num.for," -q:v ",qual," -r ", frame.rate," -f mp4", filt," -vcodec libx264 -pix_fmt yuv420p ", vid.path,vid.ext, " -y"),ignore.stderr = silent) #see https://trac.ffmpeg.org/wiki/Encode/MPEG-4
   

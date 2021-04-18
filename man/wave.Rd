@@ -4,8 +4,16 @@
 \alias{wave}
 \title{Compute wavelengths from a sine-like waveform}
 \usage{
-wave(x, y, method = "zeros", zero.begin = TRUE, fit = TRUE,
-  dens = 10, smooth = 0.1, smoothing = "loess")
+wave(
+  x,
+  y,
+  method = "zeros",
+  zero.begin = TRUE,
+  fit = TRUE,
+  dens = 10,
+  smooth = 0.1,
+  smoothing = "loess"
+)
 }
 \arguments{
 \item{x}{numeric; x position}

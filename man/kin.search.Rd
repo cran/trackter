@@ -4,11 +4,26 @@
 \alias{kin.search}
 \title{Midline tracking over image sequences}
 \usage{
-kin.search(image.dir = NULL, frames = NULL, thr = "otsu",
-  plot.pml = TRUE, show.prog = FALSE, ant.per = 0.1, tips = 0.02,
-  smoothing = "loess", smooth = 0.2, smooth.points = 200,
-  image.type = "orig", save = TRUE, out.dir = NULL, flip = TRUE,
-  size.min = 0.02, search.for = "largest", edges = FALSE)
+kin.search(
+  image.dir = NULL,
+  frames = NULL,
+  thr = "otsu",
+  plot.pml = TRUE,
+  show.prog = FALSE,
+  ant.per = 0.1,
+  tips = 0.02,
+  smoothing = "loess",
+  smooth = 0.25,
+  smooth.points = 200,
+  image.type = "orig",
+  save = TRUE,
+  out.dir = NULL,
+  flip = TRUE,
+  size.min = 0.02,
+  search.for = "largest",
+  edges = FALSE,
+  border = 5
+)
 }
 \arguments{
 \item{image.dir}{character, directory containing images to analyze.}
@@ -35,7 +50,7 @@ kin.search(image.dir = NULL, frames = NULL, thr = "otsu",
 
 \item{save}{logical, value indicating if images should be outputted with midline and predicted midline based on the \code{ant.per} \code{lm()} overlaying original or binary images.}
 
-\item{out.dir}{character, the directory to which ouputted images should be saved.}
+\item{out.dir}{character, the directory to which outputted images should be saved.}
 
 \item{flip}{logical, indicating if binary should be flipped.}
 
@@ -44,6 +59,8 @@ kin.search(image.dir = NULL, frames = NULL, thr = "otsu",
 \item{search.for}{character, the search parameter. See Details.}
 
 \item{edges}{logical, should ROIs on image edges be evaluated. See Details.}
+
+\item{border}{if \code{edges=TRUE}, size of border to add in pixels. Dee details.}
 }
 \value{
 A list with the following components:	
@@ -51,7 +68,6 @@ A list with the following components:
 \code{kin.dat} a data table consisting of frame-by-frame position parameters for the ROI determined by \code{search.for}.	
 \itemize{	
 \item the frame number	
-
 \item 'x' and ''y': the position of the tail (rightmost or posteriormost)	
 \item 'head.x' and 'head.y': the x and y position of the head (leftmost or anteriormost)	
 \item 'amp': the amplitude (\code{amp}) of the tail relative to thr theoretical midline determined by the \code{lm()} predictions from \code{ant.per}	
@@ -131,6 +147,8 @@ The algorithm assumes a left-right orientation, i.e., the head of the ROI is pos
 
 Thresholding operations can be performed with an arbitrary (user defined) numeric value or with Otsu's method ('thr="otsu"'). The latter chooses a threshold value by minimizing the combined intra-class variance. See \code{\link{otsu}}.	
 
+If 'edges=TRUE', it is best to add an artificial border so that any part of the ROI in contact with the edge can be distinguished from it.
+
 \code{search.for} determines how ROIs are chosen: 	
 \itemize{	
 \item "offset", the ROI with a centroid that is the shortest linear distance to the center of the field	
@@ -141,7 +159,7 @@ Thresholding operations can be performed with an arbitrary (user defined) numeri
 	
 These choices will be made on ROI sets that are not on the edge of the field if 'edges=FALSE'.	
 	
-\code{edges} Set by default to 'FALSE'. It is not advisable to include shapes that are on the edge of any frame and are therefore incomplete.	
+\code{edges} Set by default to 'FALSE'. It is not advisable to include shapes that are on the edge of any frame and are therefore incomplete.	Yet, if set to 'TRUE', the \code{border} adds a black border to the image so that the intended ROI may be distinguished from the edge.
 	
 \code{image.type} Can be set as "orig" or "bin". "orig" plots midline and reference lines over the original video frames, "bin" over binary images.
 }
@@ -167,7 +185,7 @@ kin <- kin.search(image.dir =paste0(tempdir(),"/example"),
       image.type="bin",smooth=0.4)	
 
 #plot instantaneous amplitude of tail (last/rightmost point) over frames 	
-p <- ggplot(dat=kin$kin.dat,aes(x=frame,y=amp))+geom_line()+geom_point()+theme_classic(15)	
+p <- ggplot(dat=kin$kin.dat,aes(x=frame,y=amp))+geom_line()+geom_point()+theme_classic(15)
 print(p)	
 	
 # midline plot	
@@ -196,17 +214,25 @@ file.exists(paste0(tempdir(),"/trout_test_red.mp4"))
 #retrieve image 
 i <- EBImage::readImage(system.file("extdata/img", "sunfish_BCF.jpg", package = "trackter"))
 #create directory and write image to it
-t <-tempdir()
+t <- tempdir()
+
+
 dir.create(paste0(t,"/images"))
 EBImage::writeImage(i,paste0(t,"/images/sunfish001.jpg"),type = "jpeg")
 
+list.files(paste0(t,"/images"))
 #run kin.search and save output image to directory
-kin.i<- kin.search(image.dir = paste0(t,"/images"),save = TRUE,out.dir = t)
+kin.i<- kin.search(image.dir = paste0(t,"/images"),smooth=0.7,save = TRUE,out.dir = t)
 
-#plot midline
+#plot midline over original image
 with(kin.i$midline,plot(x,wave.y))
-i2 <- EBImage::readImage(paste0(tempdir(),"/sunfish001_000.jpg"))
+
+i2 <- EBImage::readImage(paste0(t,"/sunfish001_000.jpg"))
 EBImage::display(i2,method="raster")
+
+#clean up
+unlink(paste0(t,"/images"),recursive=TRUE)
+
 }
 \seealso{
 \code{\link{kin.simple}}

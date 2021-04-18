@@ -13,7 +13,7 @@
 #' \item 'eel' (genus Anguilla) swimming with body undulations
 #' \item 'sunfish_BCF' (genus Lepomis) swimming with body-caudal fin propulsion
 #' \item 'sunfish_pect' (genus Lepomis) swimming with both body-caudal fin and pectoral fin oscillations
-#' \item 'trout' (genus Onchorhynchus) swimming with body-caudal fin propulsion
+#' \item 'trout' (genus Oncorhynchus) swimming with body-caudal fin propulsion
 #' }
 #' 
 #'   Each of these fish types include contours sampled regularly over one tail-beat cycle. 

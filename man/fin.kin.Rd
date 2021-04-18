@@ -4,8 +4,15 @@
 \alias{fin.kin}
 \title{Tracking of fin-like extensions of body contours}
 \usage{
-fin.kin(x, fin.pos = NULL, smooth.n = 50, tip.ang = 10,
-  smoothing = "loess", x.bins = 0.2, ml.smooth = 0.2)
+fin.kin(
+  x,
+  fin.pos = NULL,
+  smooth.n = 50,
+  tip.ang = 10,
+  smoothing = "loess",
+  x.bins = 0.2,
+  ml.smooth = 0.25
+)
 }
 \arguments{
 \item{x}{a data frame or matrix with 'x' and 'y' data as columns.}

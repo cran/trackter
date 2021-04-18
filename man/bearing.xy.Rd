@@ -2,7 +2,7 @@
 % Please edit documentation in R/trig.funs.R
 \name{bearing.xy}
 \alias{bearing.xy}
-\title{Compute the heading between to cartesian points}
+\title{Computes the heading between to cartesian points}
 \usage{
 bearing.xy(x1, x2, y1, y2)
 }

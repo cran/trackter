@@ -4,8 +4,15 @@
 \alias{images.to.video}
 \title{Stitches images into a video file}
 \usage{
-images.to.video(image.dir = NULL, out.dir = NULL, vid.name = NULL,
-  qual = 50, frame.rate = 10, overwrite = FALSE, silent = TRUE)
+images.to.video(
+  image.dir = NULL,
+  out.dir = NULL,
+  vid.name = NULL,
+  qual = 50,
+  frame.rate = 10,
+  overwrite = FALSE,
+  silent = TRUE
+)
 }
 \arguments{
 \item{image.dir}{character; directory containing images to stitch.}
@@ -54,6 +61,10 @@ vid.name="spiral.mp4",out.dir=tempdir(),
 frame.rate=5,qual=100,silent=TRUE,overwrite=TRUE)
 
 file.exists(paste0(tempdir(),"/spiral.mp4"))
+
+#clean up
+unlink(paste0(tempdir(),"/spiral.mp4"))
+unlink(paste0(tempdir(),"/images"),recursive=TRUE)
 }
 }
 \seealso{

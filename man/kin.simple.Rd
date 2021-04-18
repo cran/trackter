@@ -4,11 +4,23 @@
 \alias{kin.simple}
 \title{Simplified midline tracking over image sequences}
 \usage{
-kin.simple(image.dir = NULL, frames = NULL, thr = 0.7,
-  size.min = 0.05, ant.per = 0.2, tips = 0.02, smoothing = "loess",
-  smooth = 0.2, smooth.points = 200, save = TRUE, out.dir = NULL,
-  plot.pml = TRUE, image.type = "orig", flip = TRUE,
-  show.prog = FALSE)
+kin.simple(
+  image.dir = NULL,
+  frames = NULL,
+  thr = 0.7,
+  size.min = 0.05,
+  ant.per = 0.2,
+  tips = 0.02,
+  smoothing = "loess",
+  smooth = 0.25,
+  smooth.points = 200,
+  save = TRUE,
+  out.dir = NULL,
+  plot.pml = TRUE,
+  image.type = "orig",
+  flip = TRUE,
+  show.prog = FALSE
+)
 }
 \arguments{
 \item{image.dir}{character, directory containing images to analyze.}
@@ -145,8 +157,10 @@ kin.i<- kin.simple(image.dir = paste0(t,"/images"),save = TRUE,out.dir = t)
 
 #plot midline
 with(kin.i$midline,plot(x,wave.y))
-i2 <- EBImage::readImage(paste0(tempdir(),"/sunfish001_000.jpg"))
+i2 <- EBImage::readImage(paste0(t,"/sunfish001_000.jpg"))
 EBImage::display(i2,method="raster")
+#clean up
+unlink(paste0(t,"/images"),recursive=TRUE)
 }
 \seealso{
 \code{\link{kin.search}}

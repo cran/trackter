@@ -1,14 +1,14 @@
 
-context("kin. fin.kin functions")
+context("kin functions")
 
 test_that("kin.simple works fine", {
   y <- EBImage::readImage(system.file("extdata/img", "sunfish_BCF.jpg", package = "trackter"))
   t <-tempdir()
   tp <- paste0(tempdir(),"/processed_images")
-  dir.create(paste0(t,"/images"))
+  dir.create(paste0(t,"/test_images"))
   dir.create(paste0(t,"/processed_images"))
-  EBImage::writeImage(y,paste0(t,"/images/sunfish001.jpg"),type = "jpeg")
-  invisible(capture.output( kin.y <- kin.simple(image.dir = paste0(t,"/images"),save = TRUE,out.dir =tp)))
+  EBImage::writeImage(y,paste0(t,"/test_images/sunfish001.jpg"),type = "jpeg")
+  invisible(capture.output( kin.y <- kin.simple(image.dir = paste0(t,"/test_images"),save = TRUE,out.dir =tp)))
   
   
   expect_length(list.files(tp),1)
@@ -20,21 +20,30 @@ test_that("kin.simple works fine", {
   expect_type(kin.y$cont$x,type = "integer")
   expect_true(kin.y$all.classes$size>0)
   
-  expect_error(invisible(capture.output( kin.y <- kin.simple(image.dir = paste0(t,"/images"),out.dir=tp,save = FALSE))),"To save processed images")
+  expect_error(invisible(capture.output( kin.y <- kin.simple(image.dir = paste0(t,"/test_images"),out.dir=tp,save = FALSE))),"To save processed images")
   
+  
+  expect_error(invisible(capture.output( kin.y <- kin.simple(image.dir = paste0(t,"/test_images"),out.dir=tp,save = FALSE))),"To save processed images")
+  
+ dir.create(paste0(t,"/test_images2"))
+  
+  expect_error(invisible(capture.output( kin.simple(image.dir = paste0(t,"/test_images2"),save=FALSE))),"no images in image.dir")
+  
+  unlink(paste0(t,"/test_images2"),recursive = TRUE)
   
   expect_error(invisible(capture.output( kin.simple(image.dir = paste0(t,"/foo"),out.dir=tp,save=TRUE))),"does not exist")
-  expect_error(invisible(capture.output( kin.simple(image.dir = paste0(t,"/images"),out.dir="foo",save=TRUE))),"does not exist")
+  expect_error(invisible(capture.output( kin.simple(image.dir = paste0(t,"/test_images"),out.dir="foo",save=TRUE))),"does not exist")
   
-  expect_error(invisible(capture.output(kin.simple(image.dir =paste0(t,"/images") ,save=TRUE))),"not specified")
+  expect_error(invisible(capture.output(kin.simple(image.dir =paste0(t,"/test_images") ,save=TRUE))),"not specified")
   
-  expect_error(invisible(capture.output( kin.simple(image.dir = paste0(t,"/images"),frames=2,save=FALSE))),"out of range")
+  expect_error(invisible(capture.output( kin.simple(image.dir = paste0(t,"/test_images"),frames=2,save=FALSE))),"out of range")
   
-  expect_error(invisible(capture.output( kin.simple(image.dir =paste0(t,"/images") , thr="foo",save=FALSE))),"must be set to")
-  expect_error(invisible(capture.output( kin.simple(image.dir =paste0(t,"/images") ,smoothing="foo",save=FALSE))),"must =")
+  expect_error(invisible(capture.output( kin.simple(image.dir =paste0(t,"/test_images") , thr="foo",save=FALSE))),"must be set to")
+  expect_error(invisible(capture.output( kin.simple(image.dir =paste0(t,"/test_images") ,smoothing="foo",save=FALSE))),"must =")
   
-  unlink(paste0(t,"/images"),recursive = TRUE)
+  unlink(paste0(t,"/test_images"),recursive = TRUE)
   unlink(tp,recursive = TRUE)
+  unlink(paste0(t,"/test_images"),recursive = TRUE)
   
 })
 
@@ -43,10 +52,10 @@ test_that("kin.search works fine", {
   y <- EBImage::readImage(system.file("extdata/img", "sunfish_BCF.jpg", package = "trackter"))
   t <-tempdir()
   tp <- paste0(tempdir(),"/processed_images")
-  dir.create(paste0(t,"/images"))
+  dir.create(paste0(t,"/test_images"))
   dir.create(paste0(t,"/processed_images"))
-  EBImage::writeImage(y,paste0(t,"/images/sunfish001.jpg"),type = "jpeg")
-  invisible(capture.output( kin.y <- kin.search(image.dir = paste0(t,"/images"),save = TRUE,out.dir =tp)))
+  EBImage::writeImage(y,paste0(t,"/test_images/sunfish001.jpg"),type = "jpeg")
+  invisible(capture.output( kin.y <- kin.search(image.dir = paste0(t,"/test_images"),save = TRUE,out.dir =tp)))
   
  
   expect_length(list.files(tp),1)
@@ -58,23 +67,30 @@ test_that("kin.search works fine", {
   expect_type(kin.y$cont$x,type = "integer")
   expect_true(kin.y$all.classes$size>0)
 
-  expect_error(invisible(capture.output( kin.y <- kin.search(image.dir = paste0(t,"/images"),out.dir=tp,save = FALSE))),"To save processed images")
+  expect_error(invisible(capture.output( kin.y <- kin.search(image.dir = paste0(t,"/test_images"),out.dir=tp,save = FALSE))),"To save processed images")
   
   
   expect_error(invisible(capture.output( kin.search(image.dir = paste0(t,"/foo"),out.dir=tp,save=TRUE))),"does not exist")
-  expect_error(invisible(capture.output( kin.search(image.dir = paste0(t,"/images"),out.dir="foo",save=TRUE))),"does not exist")
+  expect_error(invisible(capture.output( kin.search(image.dir = paste0(t,"/test_images"),out.dir="foo",save=TRUE))),"does not exist")
   
-  expect_error(invisible(capture.output(kin.search(image.dir =paste0(t,"/images") ,save=TRUE))),"not specified")
+  expect_error(invisible(capture.output(kin.search(image.dir =paste0(t,"/test_images") ,save=TRUE))),"not specified")
   
-  expect_error(invisible(capture.output( kin.search(image.dir = paste0(t,"/images"),frames=2,save=FALSE))),"out of range")
+  expect_error(invisible(capture.output( kin.search(image.dir = paste0(t,"/test_images"),frames=2,save=FALSE))),"out of range")
   
-  expect_error(invisible(capture.output( kin.search(image.dir =paste0(t,"/images") , thr="foo",save=FALSE))),"must be set to")
-  expect_error(invisible(capture.output( kin.search(image.dir =paste0(t,"/images") ,smoothing="foo",save=FALSE))),"must =")
+  expect_error(invisible(capture.output( kin.search(image.dir =paste0(t,"/test_images") , thr="foo",save=FALSE))),"must be set to")
+  expect_error(invisible(capture.output( kin.search(image.dir =paste0(t,"/test_images") ,smoothing="foo",save=FALSE))),"must =")
   
-  expect_error(invisible(capture.output( kin.search(image.dir =paste0(t,"/images") ,search.for="foo",save=FALSE))),"must be set to")
+  expect_error(invisible(capture.output( kin.search(image.dir =paste0(t,"/test_images") ,search.for="foo",save=FALSE))),"must be set to")
   
-  unlink(paste0(t,"/images"),recursive = TRUE)
+  dir.create(paste0(t,"/test_images2"))
+  
+  expect_error(invisible(capture.output( kin.search(image.dir = paste0(t,"/test_images2"),save=FALSE))),"no images in image.dir")
+  
+  unlink(paste0(t,"/test_images2"),recursive = TRUE)
+  
+  unlink(paste0(t,"/test_images"),recursive = TRUE)
   unlink(tp,recursive = TRUE)
+
   
 })
 

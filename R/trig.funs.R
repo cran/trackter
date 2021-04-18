@@ -1,4 +1,3 @@
-
 #' @title Computes distance between two points in Cartesian space.
 #'
 #' @description Computes distance between two points in Cartesian space using simple trigonometry functions
@@ -64,7 +63,7 @@ deg <- function(x){180/pi*x}
 #' @seealso \code{\link{deg}}
 rad <- function(x){pi/180*x}
 
-#' @title Compute the heading between to cartesian points
+#' @title Computes the heading between to cartesian points
 #' @description Computes the heading (radians counter clockwise from north or vertical)
 #'
 #' @param x1 Numeric; point A x value

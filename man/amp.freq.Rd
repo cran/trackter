@@ -20,14 +20,14 @@ a list with amplitude "a", frequency "f", amplitude returned from a smoothed sig
 Computes amplitude(s) and wavelength(s) of a wave form, amongst other things, based on a sampling frequency
 }
 \examples{
-\dontrun{
+
 #Compute waveform patterns
 x <- seq(0,pi,0.1)
 y <- sin(x^1.3*pi)
 plot(x,y)
 
 amp.freq(x=x,y=y)
-}
+
 }
 \seealso{
 \code{\link{features}}

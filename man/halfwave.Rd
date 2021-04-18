@@ -4,8 +4,16 @@
 \alias{halfwave}
 \title{Compute half wavelengths from a sine-like waveform}
 \usage{
-halfwave(x, y, method = "zeros", zero.begin = TRUE, fit = TRUE,
-  dens = 10, smooth = 0.1, smoothing = "loess")
+halfwave(
+  x,
+  y,
+  method = "zeros",
+  zero.begin = TRUE,
+  fit = TRUE,
+  dens = 10,
+  smooth = 0.1,
+  smoothing = "loess"
+)
 }
 \arguments{
 \item{x}{Numeric; x position}

@@ -4,7 +4,7 @@
 \alias{:=}
 \title{Assignment by reference}
 \usage{
-":="(...)
+`:=`(...)
 }
 \arguments{
 \item{...}{See ? `...`}

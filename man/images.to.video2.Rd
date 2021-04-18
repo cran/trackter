@@ -4,9 +4,18 @@
 \alias{images.to.video2}
 \title{Stitches images from video file passing filters to ffmpeg}
 \usage{
-images.to.video2(image.dir = NULL, out.dir = NULL, vid.name = NULL,
-  overwrite = TRUE, qual = 50, vid.ext = ".mp4", frame.rate = 10,
-  raw = TRUE, filt = NULL, silent = TRUE)
+images.to.video2(
+  image.dir = NULL,
+  out.dir = NULL,
+  vid.name = NULL,
+  overwrite = TRUE,
+  qual = 50,
+  vid.ext = ".mp4",
+  frame.rate = 10,
+  raw = TRUE,
+  filt = NULL,
+  silent = TRUE
+)
 }
 \arguments{
 \item{image.dir}{character; directory containing images to stitch.}
@@ -62,6 +71,9 @@ vid.name="spiral",out.dir=tempdir(),
 frame.rate=5,qual=100,silent=TRUE,overwrite=TRUE)
 
 file.exists(paste0(tempdir(),"/spiral.mp4"))
+
+#clean up
+unlink(paste0(tempdir(),"/images"),recursive=TRUE)
 }
 }
 \seealso{

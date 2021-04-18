@@ -1,8 +1,6 @@
-# halfwave
 #' @title Compute half wavelengths from a sine-like waveform
 #' @description Computes half wavelengths and their positions and amplitude from a sine-like waveform based on either peak-to-trough or internodal distance.
 #'
-
 #' @param x Numeric; x position
 #' @param y numeric; y position
 #' @param method character; how half waves should be found and classified, where it crosses zero/the internodal length ("zeros") or peak to trough/trough to peak ("p2t"). See Details. 
@@ -68,6 +66,7 @@
 #'
 #'
 #' @export
+#' 
 halfwave <-function(x,y,method = "zeros", zero.begin=TRUE,fit=TRUE,dens=10,smooth=0.1,smoothing="loess") {
   
   wave.begin <- zeros <- l <- begin.index <- end.index <- NULL #to avoid NSE notes in R CMD check
@@ -89,7 +88,6 @@ halfwave <-function(x,y,method = "zeros", zero.begin=TRUE,fit=TRUE,dens=10,smoot
   
   
   #find peaks and then lengths
-  
   
   if (method == "p2t") {
     
@@ -193,7 +191,6 @@ halfwave <-function(x,y,method = "zeros", zero.begin=TRUE,fit=TRUE,dens=10,smoot
   ))
 }
 
-# wave
 #' @title Compute wavelengths from a sine-like waveform
 #' @description Computes full wavelengths and their positions and amplitude from a sine-like waveform based on either peak-to-peak, trough-to-trough, or internodal distance.
 #'
@@ -204,7 +201,7 @@ halfwave <-function(x,y,method = "zeros", zero.begin=TRUE,fit=TRUE,dens=10,smoot
 #' @param fit logical; if 'method="zeros"', should zeros be detected by a fitting operation. See Details.
 #' @param smoothing character; the smoothing method when 'fit=TRUE', either 'loess' or 'spline'. See Details.
 #' @param dens numeric; factor by which to increase the sample density used in fitting when 'method="zeros"'. See Details.
-#'@param smooth numeric; if \code{smoothing} is set to 'loess', 'span' parameter value for \code{\link{loess}}. If \code{smoothing} is set to 'spline' 'spar' parameter value for \code{\link{smooth.spline}}
+#' @param smooth numeric; if \code{smoothing} is set to 'loess', 'span' parameter value for \code{\link{loess}}. If \code{smoothing} is set to 'spline' 'spar' parameter value for \code{\link{smooth.spline}}
 #'
 #' @details If 'method="p2p"' or 'method="t2t"', full waves are found using critical points (i.e., local maxima, the peaks or minima, the troughs) with \code{\link{features}}.
 #' 
@@ -262,12 +259,14 @@ halfwave <-function(x,y,method = "zeros", zero.begin=TRUE,fit=TRUE,dens=10,smoot
 #'#trough-to-trough method
 #' w.p <- wave(x,y,method="t2t")
 #' 
-#'qplot(data=w.p$names,x=x,y=y,col=wave)
+#' qplot(data=w.p$names,x=x,y=y,col=wave)
 #'
 #' @export
+#' 
+
 wave <-function(x,y,method = "zeros", zero.begin=TRUE,fit=TRUE,dens=10,smooth=0.1,smoothing="loess") {
   
-  wave.begin <- zeros <- l <- begin.index <- end.index <- NULL# to avoid NSE erros on R CMD check
+  wave.begin <- zeros <- l <- begin.index <- end.index <- NULL# to avoid NSE errors on R CMD check
   
   if (!method %in% c("p2p", "zeros","t2t"))  stop("method must be set to 'p2p' , 't2t', or 'zeros' (the default)")
   x = c(unlist(x))
@@ -397,7 +396,6 @@ wave <-function(x,y,method = "zeros", zero.begin=TRUE,fit=TRUE,dens=10,smooth=0.
   ))
 }
 
-#amp.freq
 #' @title Computes amplitude and frequency of wave-like data
 #' @description Computes amplitude(s) and wavelength(s) of a wave form, amongst other things, based on a sampling frequency
 #'
@@ -409,14 +407,14 @@ wave <-function(x,y,method = "zeros", zero.begin=TRUE,fit=TRUE,dens=10,smooth=0.
 #' @import features
 #' @seealso \code{\link{features}}
 #' @examples
-#'\dontrun{
+#'
 #' #Compute waveform patterns
 #' x <- seq(0,pi,0.1)
 #' y <- sin(x^1.3*pi)
 #' plot(x,y)
 #'
 #' amp.freq(x=x,y=y)
-#' }
+#' 
 
 amp.freq <- function(x = NULL, y, sf = 100) {
   s <- 1 / sf
@@ -431,12 +429,12 @@ amp.freq <- function(x = NULL, y, sf = 100) {
   names(snr) <- NULL
   freq <-
     1 / (s * diff(amp.n$cpts[seq(1, length(amp.n$cpts), 2)])) #peak to peak or trough to trough freq
-  tail.dat <-
+ dat <-
     list(a = amp,
          f = freq,
          a.f = amp.f,
-         snr = snr)#a.f is amp according to function
+         snr = snr) #a.f is amp according to function
   
-  return(tail.dat)
+  return(dat)
 }
 

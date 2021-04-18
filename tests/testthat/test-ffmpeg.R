@@ -14,16 +14,16 @@ test_that("vid.to.images works", {
   
   v <- system.file("extdata/vid", "sunfish_BCF.avi", package = "trackter")
   file.copy(v,tempdir())
-  dir.create(paste0(tempdir(),"/images"))
+  dir.create(paste0(tempdir(),"/test_images"))
   
-  vid.to.images(vid.path = paste0(tempdir(),"/sunfish_BCF.avi"),out.dir =paste0(tempdir(),"/images"))
+  vid.to.images(vid.path = paste0(tempdir(),"/sunfish_BCF.avi"),out.dir =paste0(tempdir(),"/test_images"))
   
-  expect_true(length(list.files(paste0(tempdir(),"/images")))==2)
+  expect_true(length(list.files(paste0(tempdir(),"/test_images")))==2)
   expect_error(vid.to.images(vid.path = paste0(tempdir(),"/sunfish_BCF.avi"),out.dir = NULL),"'out.dir' not specified")
   expect_error(vid.to.images(vid.path = paste0(tempdir(),"/sunfish_BCF.avi"),out.dir =paste0(tempdir(),"/foo") ),"Directory specified by 'out.dir'")
-  expect_error(vid.to.images(vid.path = paste0(tempdir(),"/foo.avi"),out.dir=paste0(tempdir(),"/images")),"Path specified by 'vid.path'")
+  expect_error(vid.to.images(vid.path = paste0(tempdir(),"/foo.avi"),out.dir=paste0(tempdir(),"/test_images")),"Path specified by 'vid.path'")
 
-  unlink(paste0(tempdir(),"/images"),recursive = TRUE)
+  unlink(paste0(tempdir(),"/test_images"),recursive = TRUE)
   unlink(paste0(tempdir(),"/sunfish_BCF.avi"))
 })
 
@@ -66,26 +66,26 @@ test_that("vid.to.images2 works", {
   skip_if(ff)
   
   v <- system.file("extdata/vid", "sunfish_BCF.avi", package = "trackter")
-  dir.create(paste0(tempdir(),"/images"))
+  dir.create(paste0(tempdir(),"/test_images"))
   file.copy(v,tempdir())
   
-  vid.to.images2(vid.path = paste0(tempdir(),"/sunfish_BCF.avi"),out.dir =paste0(tempdir(),"/images"))
+  vid.to.images2(vid.path = paste0(tempdir(),"/sunfish_BCF.avi"),out.dir =paste0(tempdir(),"/test_images"))
   
-  expect_true(length(list.files(paste0(tempdir(),"/images")))==2)
+  expect_true(length(list.files(paste0(tempdir(),"/test_images")))==2)
   
   expect_error(vid.to.images2(vid.path = paste0(tempdir(),"/sunfish_BCF.avi"),out.dir = NULL),"'out.dir' not specified")
   expect_error(vid.to.images2(vid.path = paste0(tempdir(),"/sunfish_BCF.avi"),out.dir = paste0(tempdir(),"/foo")),"Directory specified by 'out.dir'")
-  img1 <- EBImage::readImage(paste0(tempdir(),"/images/",list.files(paste0(tempdir(),"/images"))[1]))
+  img1 <- EBImage::readImage(paste0(tempdir(),"/test_images/",list.files(paste0(tempdir(),"/test_images"))[1]))
   
-  expect_error(vid.to.images2(vid.path = NULL,out.dir =paste0(tempdir(),"/images") ),"vid.path' not specified")
-  expect_error(vid.to.images2(vid.path = paste0(tempdir(),"/foo.avi"),out.dir =paste0(tempdir(),"/images")),"Path specified by 'vid.path'")
+  expect_error(vid.to.images2(vid.path = NULL,out.dir =paste0(tempdir(),"/test_images") ),"vid.path' not specified")
+  expect_error(vid.to.images2(vid.path = paste0(tempdir(),"/foo.avi"),out.dir =paste0(tempdir(),"/test_images")),"Path specified by 'vid.path'")
   
-  vid.to.images2(vid.path = paste0(tempdir(),"/sunfish_BCF.avi"),filt = " -vf scale=200:-1 ",out.dir =paste0(tempdir(),"/images")) 
-  img2 <- EBImage::readImage(paste0(tempdir(),"/images/",list.files(paste0(tempdir(),"/images"))[1]))
+  vid.to.images2(vid.path = paste0(tempdir(),"/sunfish_BCF.avi"),filt = " -vf scale=200:-1 ",out.dir =paste0(tempdir(),"/test_images")) 
+  img2 <- EBImage::readImage(paste0(tempdir(),"/test_images/",list.files(paste0(tempdir(),"/test_images"))[1]))
   expect_true(dim(img1)[1]>dim(img2)[1]) #images with scaling filter are smaller
   
   
-  unlink(paste0(tempdir(),"/images"),recursive = TRUE)
+  unlink(paste0(tempdir(),"/test_images"),recursive = TRUE)
   unlink(paste0(tempdir(),"/sunfish_BCF.avi"))
   
 })

@@ -4,8 +4,14 @@
 \alias{vid.to.images2}
 \title{Extracts images from a video file with ffmpeg}
 \usage{
-vid.to.images2(vid.path = NULL, out.dir = NULL, overwrite = FALSE,
-  filt = NULL, codec = NULL, silent = TRUE)
+vid.to.images2(
+  vid.path = NULL,
+  out.dir = NULL,
+  overwrite = FALSE,
+  filt = NULL,
+  codec = NULL,
+  silent = TRUE
+)
 }
 \arguments{
 \item{vid.path}{character; path of video file to be processed.}
@@ -53,6 +59,9 @@ out.dir=paste0(tempdir(),"/images"),filt=filt.red,codec=NULL)
 
 #see the images in the "images" directory
 list.files( paste0(tempdir(),"/images"))
+
+#clean up
+unlink(paste0(tempdir(),"/images"),recursive=TRUE)
 }
 }
 \seealso{

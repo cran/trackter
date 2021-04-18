@@ -1,0 +1,216 @@
+---
+title: "tutorial"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{tutorial}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE, comment = "#>", out.width = "50%",
+  message = FALSE, warning = FALSE, error = FALSE,fig.path=""
+)
+```
+
+
+## Installation
+
+The release version of *trackter* can be installed with:
+
+```{r eval=FALSE}
+install.packages("trackter")
+```
+
+The current development version can be installed with:
+
+```{r eval=FALSE}
+    require(devtools)
+    install_github("ckenaley/trackter")
+    require(trackter)
+```
+    
+
+## External dependencies
+
+The core functions of *trackter* that extract shape and contour data from images ( `kin.simple` and `kin.search`) depend upon *EBImage*, available on the Bioconductor repository. The current build and development versions of *trackter* install this dependency. If it does not install, it can be done so easily with just a few lines of code: 
+
+```{r eval=FALSE}
+  if (!requireNamespace("BiocManager", quietly = TRUE))
+   install.packages("BiocManager")
+   BiocManager::install("EBImage")
+```
+
+*trackter* also contains several functions for image and video processing. These functions depend on the popular `FFmpeg` package and it must be installed if the user intends to use them. Installation is platform-dependent. I found the [`FFmpeg` wiki installation and compilation guide to be quite useful](https://trac.ffmpeg.org/wiki/CompilationGuide).
+
+## Features
+
+__Automated kinematic analysis__
+
+* Fast and accurate contour and shape analysis of ROIs.
+* ROI detection with search parameters including position and size.
+* Relevant functions: `kin.search` and `kin.simple`.
+
+__Tools for kinematic analysis of swimming animals__
+
+* Calculate midline (propulsive) wavelength, trailing-edge frequency, paired-fin position.
+* Relevant functions: `amp.freq`, `halfwave`, `wave`, and `fin.kin`
+
+__Tools for image and video processing using FFmpeg__
+
+* Access `FFmpeg` functionality, including filters and codecs, to extract frames, stitch videos, and edit images and videos.
+
+* Relevant functions: `images.to.videos`, `images.to.videos2`, `vid.to.images`, and `vid.to.images2`
+
+__Other miscellaneous, low-level tools for kinematic analysis__
+
+* Compute distances in 2d space, angles, heading/bearing, convert radians to degrees and vice versa.
+* Relevant functions: `dist.2d`, `cosine.ang`, `bearing.xy`, `deg`, `rad`
+
+
+## Examples
+
+```{r setup}
+library(trackter)
+library(ggplot2)
+library(data.table)
+```
+
+
+### Analyzing a single image
+
+*trackter* was developed to analyze image data from videos of swimming fishes, although any object in an image field has potential for analysis. Here, we start by accessing an image of a swimming fish included with the package in a directory named "img" and displaying it.
+
+```{r sunfishimage,fig.height=2.5}
+
+i <- system.file("extdata/img","sunfish_BCF.jpg",package="trackter")
+y <- EBImage::readImage(i)
+
+
+EBImage::display(y,method="raster")
+
+
+```
+
+Here, `kin.simple` is used to extract contour and shape information from the image above by refering to the directory that contains it. An image with a midline overlay is saved to the working directory (see below).
+
+```{r results=FALSE}
+
+dir <- system.file("extdata","img",package="trackter")
+
+kin.y <- kin.simple(image.dir = dir,out.dir = getwd())
+
+
+```                
+
+The `kin` functions in *trackter* return a list of data tables/data frames:
+```{r kiny print}
+print(sapply(kin.y,class))
+```
+
+Most will be interested in the "kin.dat" and "midline" data for the calculation of body shape and position parameters (e.g., amplitude, wavelength, etc.). For example, the "kin.dat" table includes, among other things, frame-specific trailing-edge (rightmost) amplitude ("x", "y"), head (leftmost) position ("head.x", "head.y") which may be used to calculate position and trailing-edge amplitude.
+
+```{r kinykindat}
+print(kin.y$kin.dat)
+```
+
+The "midline" table is composed of frame-specific midline data, including, among other things, calculated midline position ("y.m"), smoothed midline position ("y.pred") and midline position relative to the head ("wave.y"). Here we see the difference between them.
+
+```{r midline, fig.pos="center",fig.width=5}
+
+print(kin.y$midline)
+ml <- melt(kin.y$midline[,.(x,y.m,y.pred,wave.y)],"x")
+qplot(data=ml,x=x,y=value)+facet_wrap(variable~.)
+
+
+```
+
+When "save=TRUE" (the default), the `kin` functions write images to a user-defined directory that include midline overlays.
+
+```{r sunfishoverlay, fig.pos="center",fig.width=5}
+
+y2 <- EBImage::readImage("sunfish_BCF_000.jpg")
+EBImage::display(y2,method="raster")
+
+#clean up
+unlink("sunfish_BCF_000.jpg")
+
+```
+
+
+### Analyzing a video and multiple images
+
+Of course, the primary utility of automated tracking routines is to process many images (i.e., frames). The `kin` functions analyze all the images in a subdirectory and assume they are ordered by a numbered suffix. One can use the `FFmpeg` wrappers `vid.to.images` or `vid.to.images2` to extract a numbered sequence from a video. Users may otherwise produce an image sequence from their videos using other software (e.g., ImageJ). Here, `vid.to.images` extracts images from a video in the package's "vid" directory of a swimming fish to a new directory named "img2". 
+
+```{r vidtoimages,results=FALSE}
+
+#construct video file path
+v <- system.file("extdata/vid","sunfish_BCF_red.avi",package="trackter")
+
+#create new directory to store images
+dir.create(paste0(getwd(),"/img2"))
+
+#extract images from video and output to new "img2" directory
+vid.to.images(v,out.dir=paste0(getwd(),"/img2"))  
+```
+
+The images are then passed through `kin.simple`. The threshold value for segmenting is set to 0.6 and the head section ("ant.per") set to 0.2 in this case.
+
+```{r kinsimple}
+  kin.y2 <- kin.simple(image.dir =paste0(getwd(),"/img2"),thr=0.6,ant.per = 0.2,save = FALSE)
+
+#clean up
+unlink(paste0(getwd(),"/img2"),recursive = TRUE)
+
+```
+
+
+Now we can have a look at trailing-edge position and amplitude (relative to the head path) across the frames. 
+
+```{r posamp,fig.pos="center",fig.width=5}
+qplot(data=kin.y2$kin.dat,x=frame,y=y) #position
+qplot(data=kin.y2$kin.dat,x=frame,y=amp) #amplitude relative to a theoretical midline established by head
+```
+
+The midline data can be accessed to assess the waveform. Here, midline x position is standardized.
+
+```{r midline2, fig.pos="center",fig.width=5}
+kin.y2$midline[,x2:=x-x[1],by=frame]
+
+#wave form plot
+qplot(data=kin.y2$midline,x=x2,y=wave.y,col=frame)
+
+
+```
+
+
+### Downstream analyses of kinematic data
+
+*trackter* supplies several functions for downstream analysis of kinematic data extracted from image frames. For instance, `half.wave` computes the midline half wavelength (i.e., propulsive wavelength in pixels) from a data table of x and y position data. These and other functions are intended for use with output from the `kin` functions.
+
+```{r wave}
+w <- halfwave(x=kin.y$midline$x,y=kin.y$midline$wave.y,method="zeros")
+print(w)
+```
+Using a "zeros" method, `half.wave` determines two half waves from the ROI in the single image above, described in the "dat" table from the output. The "names" table can be used to visualize the half wavelengths.
+
+
+```{r wavenumber, fig.pos="center",fig.width=5}
+qplot(data=w$names,x=x,y=y,col=wave)
+```
+
+We could extend this framework using `data.table` to calculate half waves in each of the 11 frames from the example video.
+
+```{r wavelengthplot, fig.pos="center",fig.width=5}
+ wave.dat <- kin.y2$midline[, { w <- halfwave(x,wave.y,method="zeros")$dat;
+ list(l=as.numeric(w$l),
+ 	amp=as.numeric(w$amp1),
+ 	pos=as.numeric(w$pos1),
+ 	start=as.numeric(w$wave.begin),
+ 	end=as.numeric(w$wave.end))},
+	 by=.(frame)]
+
+qplot(data=wave.dat,x=pos,y=l)
+```
+
